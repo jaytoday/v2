@@ -1,8 +1,20 @@
 # Staffjoy V2
 
-[![Build Status](https://travis-ci.org/Staffjoy/v2.svg?branch=master)](https://travis-ci.org/Staffjoy/v2) [![Moonlight](https://img.shields.io/badge/contractors-1-brightgreen.svg)](https://moonlightwork.com/staffjoy) 
+[![Build Status](https://travis-ci.org/Staffjoy/v2.svg?branch=master)](https://travis-ci.org/Staffjoy/v2) [![Moonlight contractors](https://www.moonlightwork.com/shields/staffjoy.svg)](https://www.moonlightwork.com/for/staffjoy?referredByUserID=1&referralProgram=maintainer&referrerName=Staffjoy) [![Godoc Reference](https://godoc.org/v2.staffjoy.com?status.svg)](https://godoc.org/v2.staffjoy.com)
 
-[Staffjoy is shutting down](https://blog.staffjoy.com/staffjoy-is-shutting-down-39f7b5d66ef6#.ldsdqb1kp), so we are open-sourcing our code. This the second version of our product, a ground-up rewrite intended for small businesses, like restaurants. You can learn about the design journey from V1 to V2 in [this blog post](https://blog.staffjoy.com/staffjoy-v2-ca15ff1a1169#.e7lmhde6v). 
+---
+
+**Update - Sept 2019:** This repo is deprecated. However, Oleg Glozman is maintaining an active fork of the repo:
+
+* The active development fork is [LandRover/StaffjoyV2](https://github.com/LandRover/StaffjoyV2), where new features are being added
+* The [`minimal-fixes-to-compile` branch](https://github.com/LandRover/StaffjoyV2/tree/minimal-fixes-to-compile) adds minimal changes to this original repo to make it compile without altering the original functionality
+
+
+---
+
+[Staffjoy is shutting down](https://blog.staffjoy.com/staffjoy-is-shutting-down-39f7b5d66ef6#.ldsdqb1kp), so we are open-sourcing our code. This the second version of our product, a ground-up rewrite intended for small businesses, like restaurants. This product was very simple and did *not* provide features like allowing workers to log in, clock-in, etc. If you want those features, please use [Staffjoy Suite](https://github.com/staffjoy/suite) You can learn about the design journey from V1 to V2 in [this blog post](https://blog.staffjoy.com/staffjoy-v2-ca15ff1a1169#.e7lmhde6v). 
+
+![Staffjoy V2](https://user-images.githubusercontent.com/1312414/29037396-1f0913ba-7b69-11e7-983f-65bea21718d2.png)
 
 We started building V2 in August 2016, became feature complete in November 2016, and [launched to the press in January 2017](http://venturebeat.com/2017/01/10/staffjoy-raises-1-2-million-to-help-small-businesses-manage-workflow-scheduling/). 
 
@@ -10,7 +22,7 @@ This is a *monorepo*, so all of the code for all of the services are in this rep
 
 ## Credit
 
-The authors of the original code were [@philipithomas](https://github.com/philipithomas), [@samdturner](https://github.com/samdturner), [@andhess](https://github.com/andhess), and some contractors. This is a fork of the internal repository. For security purposes, the Git history has been squashed.
+The authors of the original code were [@philipithomas](https://github.com/philipithomas), [@samdturner](https://github.com/samdturner), [@andhess](https://github.com/andhess), and some contractors. [@kootommy](https://github.com/kootommy) designed the application and most of the marketing pages, and worked closely with engineering on implementation. This is a fork of the internal repository. For security purposes, the Git history has been squashed.
 
 ## Services
 
@@ -109,7 +121,7 @@ If things are really goofing, run `vagrant destroy -f` then rebuild.
 
 * There is a **known bug** where kubernetes does not come back after vagrant halts. To identify this, ssh into vagrant (`vagrant ssh`), then examine running docker containers (`docker ps`). If it's not running dozens of contianers, there's a problem. **To fix this:**, run `make dev-k8s-fix`. (Your local data may be wiped out).
 * If files are not syncing between your laptop and vagrant (to Vagrant's `$STAFFJOY` directory) - try running `make dev` again, or manually running unison (the syncer) on the host machine with `./vagrant/unison.sh`.
-* If your machine can't keep up with autobuilding on changes, it may be preferred to stop using `make dev` and to instead call its two subcommands  separately (manually): `./vagrant/unison.sh` to sync files on your computer, then SSHing into Vagrant and manually triggering builds (`cd $STAFFJOY && make dev-build`)
+* If your machine can't keep up with autobuilding on changes, it may be preferred to stop using `make dev` and to instead call its two subcommands separately (manually): `./vagrant/unison.sh` to sync files on your computer, then SSHing into Vagrant and manually triggering builds (`cd $STAFFJOY && make dev-build`)
 
 ### Development resources
 
@@ -139,6 +151,19 @@ The tool [GoConvey](https://github.com/smartystreets/goconvey) is great for seei
 ## Protocol Buffers
 
 If you modify the files in `protobuf/`, run `make protobuf` to recompile all of the generated files.
+
+⚠️ Please make sure that the version of protobuf matches the runtime version ([see this issue](https://github.com/Staffjoy/v2/issues/5#issuecomment-305704425)):
+
+  ```sh
+  go get github.com/golang/protobuf/...
+  cd $GOPATH/src/github.com/golang/protobuf/
+  # Switch to version that is packaged in app
+  git checkout df1d3ca07d2d07bba352d5b73c4313b4e2a6203e
+  # Re-install
+  go install github.com/golang/protobuf/proto
+  cd $GOPATH/src/v2.staffjoy.com/
+  make protobuf
+  ```
 
 If you're getting started with protocol buffers, here are some resources:
 
